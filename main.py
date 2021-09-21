@@ -5,7 +5,7 @@ from datetime import datetime
 from matplotlib import pyplot as plt
 import Indicator
 import portfolio as pf
-
+import stock as s
   
 
 portf1 = pf.Portfolio("Pat",100000000)
@@ -16,7 +16,7 @@ portf1.buyStock('2020-03-01','NFLX',110, 500)
 portf1.buyStock('2020-03-01','NFLX',160, 500)
 portf1.sellStock('2020-03-01','AAPL',150,200)
 portf1.sellStock('2020-03-01','AAPL',150,800)
-portf1.buyStock('2020-03-01')
 print(portf1.getPortfolio())
 print(portf1.getPortfolioDetail())
+print(s.stockDetail.getStockLatest("AAPL"))
 

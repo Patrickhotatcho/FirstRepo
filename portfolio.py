@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from scipy import stats
 import numpy as np
 import math
+import stock as s
 
 class Portfolio:
     portfolioName = "";
@@ -32,12 +33,8 @@ class Portfolio:
         else:
             self.noOfStock += 1
             self.invested += price*noOfTransaction
-            yearAgo = (datetime.today()- timedelta(365)).strftime('%Y-%m-%d')
             today = datetime.today().strftime('%Y-%m-%d')
-            try:
-                df = web.DataReader(stock, data_source='yahoo',start= yearAgo,end= today)['Adj Close']
-            except:
-                print('Invalid Input')
+            df = s.stockDetail.getStockData(stock,365,today)
                 
             risk = str(round((self.volatility(df))*100,2)) + '%'
             AverageGeomatricReturn = str(round(((self.AverageGeomatricReturn(df)-1))*100,2)) + '%'
@@ -63,11 +60,9 @@ class Portfolio:
 
     def update(self,df):
         today = datetime.today().strftime('%Y-%m-%d');
-        weekAgo = (datetime.today()- timedelta(7)).strftime('%Y-%m-%d')
-        
-        
+ 
         for stocks in df['Stock']:
-            df = web.DataReader(stocks, data_source='yahoo',start= weekAgo,end= today)['Adj Close']
+            df = s.stockDetail.getStockData(stocks,7,today)
             filt = self.portf['Stock'] == stocks
             self.portf.loc[filt,'Spot Price'] = round(df.iloc[len(df)-1],2)  
             self.portf.loc[filt,'%change'] = str(round(((df.iloc[len(df)-1] / float(self.portf.loc[filt,'Price']))-1)*100,2))+'%'          
