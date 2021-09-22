@@ -27,15 +27,18 @@ class MovingAverage:
 
     
 
-    def plotChart(title,df):
+    def plotChart(title,df,color):
         plt.style.use("fivethirtyeight")
-        plt.plot(df['Date'],df['MA'])
+        plt.plot(df['Date'],df['MA'],color)
         plt.title(title)
         plt.xlabel('Date',fontsize=18)
         plt.ylabel('Price(USD)',fontsize=18)
         plt.legend()
-        plt.show()
-    
+
+    def combinetTwo(df1,df2):
+        plt.legend(df1,df2);
+
+
     def combinedChart(title,day1,df1,day2,df2,day3,df3):
         plt.style.use("fivethirtyeight")
 
