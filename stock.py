@@ -18,4 +18,5 @@ class stockDetail:
             df = web.DataReader(stock, data_source='yahoo',start= today,end= today)['Adj Close']
         except:
             print('Invalid Input')
-        return float(df)
+    
+        return float(df[0])

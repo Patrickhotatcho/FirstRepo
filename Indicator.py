@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
 from pandas_datareader import data as web
 import pandas as pd
+import statistics as st
 
 class MovingAverage:
 
     
-    def MA(start,stock,MAday):
+    def Price_MA(start,stock,MAday):
         today = datetime.today().strftime('%Y-%m-%d')
         df = pd.DataFrame()
         df2 = pd.DataFrame(columns=['Date','MA'])
@@ -24,16 +25,34 @@ class MovingAverage:
                 df2.loc[i-MAday-1] = [df['Date'][i],MA]
                 sumOfPrice = 0
         return df2
-
+    
+    def Volatility_MA(start,stock,MAday):
+        today = datetime.today().strftime('%Y-%m-%d')
+        df = pd.DataFrame()
+        df2 = pd.DataFrame(columns=['Date','MA'])
+        try:
+            df = web.DataReader(stock, data_source='yahoo',start= start ,end= today)['Adj Close']
+        except:
+            print("Invalid Input")
+        df = df.pct_change()
+        df = df.reset_index()
+        for i in range(len(df['Adj Close'])):
+            list = []
+            if(i>MAday):
+                for j in range(MAday):
+                    list.append(df['Adj Close'][i-j])
+                MA = st.pstdev(list)
+                df2.loc[i-MAday-1] = [df['Date'][i],MA]
+        return df2
     
 
-    def plotChart(title,df,color):
+    def plotChart(name,title,df,color):
         plt.style.use("fivethirtyeight")
         plt.plot(df['Date'],df['MA'],color)
         plt.title(title)
         plt.xlabel('Date',fontsize=18)
         plt.ylabel('Price(USD)',fontsize=18)
-        plt.legend()
+        plt.legend(name)
 
     def combinetTwo(df1,df2):
         plt.legend(df1,df2);
@@ -51,4 +70,5 @@ class MovingAverage:
         plt.ylabel('Price(USD)',fontsize=18)
         plt.legend()
         plt.show()
+
                 
