@@ -142,4 +142,4 @@ class Portfolio:
             portf_e_return = str(round(portf_e_return*100,2)) + '%'
             portf_return = str(round(self.TotalPandL/self.initValue*100,2))+ '%'
             self.incomeStatement.loc[0] = [self.portfolioName,portf_e_return,port_risk,self.TotalPandL,self.invested,self.account_value,portf_return,self.ProfitCase,self.LossCase]
-        print(self.incomeStatement)
+        return self.incomeStatement
