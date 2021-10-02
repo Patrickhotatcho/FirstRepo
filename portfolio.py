@@ -18,10 +18,10 @@ class Portfolio:
     TotalPandL = float(0)
     LossCase = 0
     ProfitCase = 0
-    portf = pd.DataFrame(columns=['Date','Stock','Price','No. of transaction','Value','Average Geomatric Return(1yr)','Average Arithmetic Return(1yr)','Volatility(1yr)','Current Value','Spot Price',"%change"])
+    portf = pd.DataFrame(columns=['Date','Stock','Price','No. of transaction','Value','Average Geometric Return(1yr)','Average Arithmetric Return(1yr)','Volatility(1yr)','Current Value','Spot Price',"%change"])
     history = pd.DataFrame(columns=['Date','Stock','Action','Price','No. of Transaction',"Profit/Loss"])
-    incomeStatement = pd.DataFrame(columns=['Portfolio Name','Portfolio Expected Return(1yr)','Portfolio Risk','Profit and Loss','Invested Money','Cash','Current Portfolio Return','Profit Trade','Loss Trade'])
-
+    incomeStatement = pd.DataFrame(columns=['Portfolio_Name','Portfolio_Expected_Return','Portfolio_Risk','Profit_and_Loss','Invested_Money','Cash','Current_Portfolio_Return','Profit_Trade','Loss_Trade'])
+    incomeStatement.set_index('Portfolio_Name')
     def __init__(self,portfolio_name,account_value):
         self.account_value = account_value
         self.portfolioName = portfolio_name
@@ -32,9 +32,9 @@ class Portfolio:
         self.turnover = float(0)
         self.TotalPandL = float(0)
         self.returnRate = "";
-        self.portf = pd.DataFrame(columns=['Date','Stock','Price','No. of transaction','Value','Average Geomatric Return(1yr)','Average Arithmetic Return(1yr)','Volatility(1yr)','Current Value','Spot Price',"%change"])
+        self.portf = pd.DataFrame(columns=['Date','Stock','Price','No. of transaction','Value','Average Geometric Return(1yr)','Average Arithmetric Return(1yr)','Volatility(1yr)','Current Value','Spot Price',"%change"])
         self.history = pd.DataFrame(columns=['Date','Stock','Action','Price','No. of Transaction',"Profit/Loss"])
-        self.incomeStatement = pd.DataFrame(columns=['Portfolio Name','Portfolio Expected Return(1yr)','Portfolio Risk','Profit and Loss','Invested Money','Cash','Current Portfolio Return','Profit Trade','Loss Trade'])
+        self.incomeStatement = pd.DataFrame(columns=['Portfolio_Name','Portfolio_Expected_Return','Portfolio_Risk','Profit_and_Loss','Invested_Money','Cash','Current_Portfolio_Return','Profit_Trade','Loss_Trade'])
 
     def buyStock(self, date, stock, price, noOfTransaction):
         filt = self.portf['Stock'] == stock
@@ -54,9 +54,9 @@ class Portfolio:
             df = s.stockDetail.getStockData(stock,365,today)
                 
             risk = str(round((self.volatility(df))*100,2)) + '%'
-            AverageGeomatricReturn = str(round(((self.AverageGeomatricReturn(df)-1))*100,2)) + '%'
-            AverageArithmeticReturn = str(round((self.AverageArithmeticReturn(df))*100,2)) + '%'
-            self.portf.loc[self.noOfStock-1] = [date,stock,float(price),int(noOfTransaction),float(price*noOfTransaction),AverageGeomatricReturn,AverageArithmeticReturn,risk,0,0,0]
+            AverageGeometricReturn = str(round(((self.AverageGeometricReturn(df)-1))*100,2)) + '%'
+            AverageArithmetricReturn = str(round((self.AverageArithmetricReturn(df))*100,2)) + '%'
+            self.portf.loc[self.noOfStock-1] = [date,stock,float(price),int(noOfTransaction),float(price*noOfTransaction),AverageGeometricReturn,AverageArithmetricReturn,risk,0,0,0]
         self.update(self.portf)
         self.account_value -= price*noOfTransaction
         self.addHistory("Buy",date,stock,price,noOfTransaction,0)
@@ -107,14 +107,14 @@ class Portfolio:
     def getPortfolio(self):
         return self.portf
 
-    def AverageGeomatricReturn(self,df):
+    def AverageGeometricReturn(self,df):
         returns = df.pct_change()
         returns = returns+1
         b=returns.iloc[1:].values
         a = stats.gmean(b)
         return a
 
-    def AverageArithmeticReturn(self,df):
+    def AverageArithmetricReturn(self,df):
         returns = df.pct_change()
         returns = returns.mean()
         return returns
@@ -142,4 +142,6 @@ class Portfolio:
             portf_e_return = str(round(portf_e_return*100,2)) + '%'
             portf_return = str(round(self.TotalPandL/self.initValue*100,2))+ '%'
             self.incomeStatement.loc[0] = [self.portfolioName,portf_e_return,port_risk,self.TotalPandL,self.invested,self.account_value,portf_return,self.ProfitCase,self.LossCase]
+        else:
+            self.incomeStatement.loc[0] = [self.portfolioName,0,0,0,0,self.account_value,0,0,0]
         return self.incomeStatement
